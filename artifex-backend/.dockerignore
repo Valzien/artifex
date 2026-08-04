@@ -1,0 +1,12 @@
+.git
+.env
+.vscode
+docker-compose.yml
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/app/*
+node_modules
+npm-debug.log
+tests

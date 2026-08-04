@@ -1,0 +1,63 @@
+import {
+  LayoutDashboard,
+  ShoppingBag,
+  MessageSquare,
+  Heart,
+  Bell,
+  Settings,
+  Briefcase,
+  Image,
+  Wallet,
+  Star,
+  BarChart3,
+  Clock,
+  Users,
+  Download,
+  Package,
+  Tag,
+  HelpCircle,
+  FileText,
+  UserCheck,
+  Mail,
+} from "lucide-react";
+
+export const CLIENT_MENU = [
+  { label: "Dashboard", to: "/client/dashboard", icon: LayoutDashboard },
+  { label: "Orders", to: "/client/orders", icon: ShoppingBag },
+  { label: "Produk Dibeli", to: "/client/product-orders", icon: Download },
+  { label: "Cart", to: "/client/cart", icon: ShoppingBag },
+  { label: "Riwayat", to: "/client/riwayat", icon: Clock },
+  { label: "Chat", to: "/client/chat", icon: MessageSquare },
+  { label: "Favorites", to: "/client/favorites", icon: Heart },
+  { label: "Notifications", to: "/client/notifications", icon: Bell },
+  { label: "Settings", to: "/client/settings", icon: Settings },
+];
+
+export const FREELANCER_MENU = [
+  { label: "Dashboard", to: "/freelancer/dashboard", icon: LayoutDashboard },
+  { label: "My Services", to: "/freelancer/services", icon: Briefcase },
+  { label: "My Products", to: "/freelancer/products", icon: Package },
+  { label: "Portfolio", to: "/freelancer/portfolio", icon: Image },
+  { label: "Orders", to: "/freelancer/orders", icon: ShoppingBag },
+  { label: "Chat", to: "/freelancer/chat", icon: MessageSquare },
+  { label: "Notifications", to: "/freelancer/notifications", icon: Bell },
+  { label: "Earnings", to: "/freelancer/earnings", icon: Wallet },
+  { label: "Withdraw", to: "/freelancer/withdraw", icon: Wallet },
+  { label: "Reviews", to: "/freelancer/reviews", icon: Star },
+  { label: "Analytics", to: "/freelancer/analytics", icon: BarChart3 },
+  { label: "Settings", to: "/freelancer/settings", icon: Settings },
+];
+
+export const ADMIN_MENU = [
+  { label: "Dashboard", to: "/admin/dashboard", icon: LayoutDashboard },
+  { label: "Users", to: "/admin/users", icon: Users },
+  { label: "Freelancers", to: "/admin/freelancers", icon: UserCheck },
+  { label: "Services", to: "/admin/services", icon: Briefcase },
+  { label: "Orders", to: "/admin/orders", icon: ShoppingBag },
+  { label: "Categories", to: "/admin/categories", icon: Tag },
+  { label: "Withdrawals", to: "/admin/withdrawals", icon: Wallet },
+  { label: "FAQ", to: "/admin/faqs", icon: HelpCircle },
+  { label: "Pesan Kontak", to: "/admin/contact-messages", icon: Mail },
+  { label: "Analytics", to: "/admin/analytics", icon: BarChart3 },
+  { label: "Reports", to: "/admin/reports", icon: FileText },
+];

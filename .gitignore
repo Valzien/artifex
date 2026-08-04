@@ -1,0 +1,15 @@
+.env
+node_modules
+/vendor
+dist
+*.log
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+.phpunit.cache
+/storage/*.key
+/public/build
+/public/storage
+/public/hot
+Artifex.zip

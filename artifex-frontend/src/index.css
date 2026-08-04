@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Bone #EBCFD0 */
+  --color-primary: 355 40% 87%;
+  --color-primary-foreground: 0 3% 10%;
+
+  /* Velvet Rose #C25E7E */
+  --color-secondary: 341 45% 57%;
+
+  /* Soft Rose #E8B4C0 */
+  --color-accent: 346 53% 81%;
+
+  /* Carbon Black #1A1919 */
+  --color-background: 0 3% 10%;
+
+  /* Dark Rose #2A1D24 */
+  --color-surface: 335 25% 15%;
+
+  /* Muted Rose border #44303A */
+  --color-border: 338 20% 25%;
+
+  /* Bone #EBCFD0 */
+  --color-ink: 355 40% 87%;
+}
+
+body {
+  @apply font-sans antialiased;
+  background: linear-gradient(
+    175deg,
+    #1a1919 0%,
+    #1a1919 15%,
+    #5c1a30 42%,
+    #6e1e3b 55%,
+    #b06a78 75%,
+    #ebcfd0 95%,
+    #ebcfd0 100%
+  );
+  background-attachment: fixed;
+  color: hsl(var(--color-ink));
+}
