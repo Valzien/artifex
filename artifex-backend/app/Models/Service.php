@@ -18,6 +18,7 @@ class Service extends Model
         'price',
         'delivery_days',
         'image',
+        'images',
         'status',
         'tags',
     ];
@@ -26,6 +27,7 @@ class Service extends Model
     {
         return [
             'tags' => 'array',
+            'images' => 'array',
         ];
     }
 

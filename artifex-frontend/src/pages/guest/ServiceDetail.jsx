@@ -18,7 +18,7 @@ function ServiceDetailContent({ id }) {
   const navigate = useNavigate();
   const role = useAuthStore((s) => s.role);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [selectedPackage, setSelectedPackage] = useState("Standard");
+  const [selectedPackage, setSelectedPackage] = useState("");
   const [activeImage, setActiveImage] = useState(0);
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -35,6 +35,13 @@ function ServiceDetailContent({ id }) {
     });
     return () => { mounted = false; };
   }, [id]);
+
+  useEffect(() => {
+    const packages = service?.packages ?? [];
+    if (packages.length && !packages.some((p) => p.name === selectedPackage)) {
+      setSelectedPackage(packages[0].name);
+    }
+  }, [service, selectedPackage]);
 
   if (loading) {
     return (
@@ -84,10 +91,10 @@ function ServiceDetailContent({ id }) {
               )}
             </div>
             <div className="mt-3 flex gap-2">
-              {service.images?.map((_, idx) => (
+              {service.images?.map((img, idx) => (
                 <button key={idx} onClick={() => setActiveImage(idx)}
-                  className={`h-16 w-20 rounded-lg border-2 bg-surface transition-colors ${activeImage === idx ? "border-primary" : "border-transparent hover:border-border"}`}>
-                  <span className="text-xs text-ink/30">{idx + 1}</span>
+                  className={`h-16 w-20 overflow-hidden rounded-lg border-2 bg-surface transition-colors ${activeImage === idx ? "border-primary" : "border-transparent hover:border-border"}`}>
+                  <img src={img} alt="" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
@@ -146,14 +153,14 @@ function ServiceDetailContent({ id }) {
           <div className="sticky top-24 space-y-4">
             <Card>
               <div className="flex gap-1 rounded-lg bg-surface p-1">
-                {service.packages?.map((p) => (
-                  <button key={p.name} onClick={() => setSelectedPackage(p.name)}
+                {(service.packages ?? []).map((p, idx) => (
+                  <button key={`${p.name}-${idx}`} onClick={() => setSelectedPackage(p.name)}
                     className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${selectedPackage === p.name ? "bg-surface text-ink shadow-sm" : "text-ink/50 hover:text-ink"}`}>
                     {p.name}
                   </button>
                 ))}
               </div>
-              {pkg && (
+              {pkg ? (
                 <div className="mt-4">
                   <div className="flex items-baseline justify-between">
                     <h3 className="font-semibold text-ink">{pkg.name}</h3>
@@ -165,12 +172,30 @@ function ServiceDetailContent({ id }) {
                     <div className="flex items-center gap-1"><RefreshCw className="h-4 w-4" />Revisi</div>
                   </div>
                   <ul className="mt-4 space-y-2">
-                    {pkg.features.map((feature) => (
+                    {(pkg.features ?? []).map((feature) => (
                       <li key={feature} className="flex items-start gap-2 text-sm text-ink/70">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />{feature}
                       </li>
                     ))}
                   </ul>
+                  <Button className="mt-6 w-full" onClick={() => {
+                    if (!isAuthenticated) return navigate("/login");
+                    if (role !== "client") return;
+                    navigate(`/client/chat?start=${freelancer?.id}`);
+                  }}><MessageSquare className="h-4 w-4" />Chat Freelancer</Button>
+                  <Button variant="outline" className="mt-2 w-full" onClick={() => {
+                    if (!isAuthenticated) return navigate("/login");
+                    if (role !== "client") return;
+                    navigate(`/client/checkout/${service.id}`);
+                  }}>Pesan Sekarang</Button>
+                </div>
+              ) : (
+                <div className="mt-4">
+                  <div className="flex items-baseline justify-between">
+                    <h3 className="font-semibold text-ink">Harga</h3>
+                    <span className="text-xl font-bold text-ink">{formatCurrency(service.price)}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-ink/60">{service.deliveryDays} hari pengerjaan</p>
                   <Button className="mt-6 w-full" onClick={() => {
                     if (!isAuthenticated) return navigate("/login");
                     if (role !== "client") return;

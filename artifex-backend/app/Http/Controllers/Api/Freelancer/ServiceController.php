@@ -14,7 +14,7 @@ class ServiceController extends Controller
     public function index(Request $request): JsonResponse
     {
         $services = Service::where('user_id', $request->user()->id)
-            ->with('category:id,name,slug')
+            ->with(['category:id,name,slug', 'packages'])
             ->withCount('orders')
             ->latest()
             ->get()
@@ -32,6 +32,8 @@ class ServiceController extends Controller
             'price' => 'required|numeric|min:0',
             'delivery_days' => 'required|integer|min:1',
             'image' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'string',
             'tags' => 'nullable|array',
             'packages' => 'nullable|array',
             'packages.*.name' => 'required_with:packages|string|max:255',
@@ -45,6 +47,7 @@ class ServiceController extends Controller
         $user = $request->user();
 
         $service = DB::transaction(function () use ($validated, $user) {
+            $images = $validated['images'] ?? null;
             $service = Service::create([
                 'title' => $validated['title'],
                 'description' => $validated['description'],
@@ -52,7 +55,8 @@ class ServiceController extends Controller
                 'user_id' => $user->id,
                 'price' => $validated['price'],
                 'delivery_days' => $validated['delivery_days'],
-                'image' => $validated['image'] ?? null,
+                'image' => $images[0] ?? ($validated['image'] ?? null),
+                'images' => $images,
                 'tags' => $validated['tags'] ?? null,
             ]);
 
@@ -84,6 +88,8 @@ class ServiceController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'delivery_days' => 'sometimes|integer|min:1',
             'image' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'string',
             'tags' => 'nullable|array',
             'packages' => 'nullable|array',
             'packages.*.name' => 'required_with:packages|string|max:255',
@@ -96,8 +102,18 @@ class ServiceController extends Controller
 
         DB::transaction(function () use ($service, $validated) {
             $service->update(collect($validated)->only([
-                'title', 'description', 'category_id', 'price', 'delivery_days', 'image', 'tags',
+                'title', 'description', 'category_id', 'price', 'delivery_days', 'tags',
             ])->toArray());
+
+            if (array_key_exists('images', $validated)) {
+                $images = $validated['images'] ?? null;
+                $service->images = $images;
+                $service->image = $images[0] ?? null;
+                $service->save();
+            } elseif (array_key_exists('image', $validated)) {
+                $service->image = $validated['image'];
+                $service->save();
+            }
 
             if (array_key_exists('packages', $validated)) {
                 $service->packages()->delete();
@@ -110,6 +126,7 @@ class ServiceController extends Controller
         });
 
         $service->load('category:id,name');
+        $service->load('packages');
         $service->loadCount('orders');
 
         return response()->json(['data' => $this->formatService($service)]);
@@ -141,6 +158,16 @@ class ServiceController extends Controller
             'reviews' => $service->reviews_count ?? 0,
             'deliveryDays' => $service->delivery_days,
             'image' => $service->image,
+            'images' => $service->images ?? ($service->image ? [$service->image] : []),
+            'packages' => $service->packages->map(fn ($pkg) => [
+                'id' => $pkg->id,
+                'name' => $pkg->name,
+                'price' => $pkg->price,
+                'description' => $pkg->description,
+                'deliveryDays' => $pkg->delivery_days,
+                'popular' => (bool) $pkg->popular,
+                'features' => $pkg->features ?? [],
+            ]),
             'createdAt' => $service->created_at,
         ];
     }

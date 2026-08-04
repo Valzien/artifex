@@ -9,6 +9,7 @@ import {
   EyeOff,
   Image,
   UploadCloud,
+  X,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -36,13 +37,23 @@ function ServiceSkeleton() {
   );
 }
 
+const emptyPackage = () => ({
+  name: "",
+  price: "",
+  delivery_days: "",
+  description: "",
+  features: [],
+  popular: false,
+});
+
 const initialForm = {
   title: "",
   description: "",
   category_id: "",
   price: "",
   deliveryDays: "",
-  image: "",
+  images: [],
+  packages: [],
 };
 
 function MyServices() {
@@ -81,7 +92,15 @@ function MyServices() {
       category_id: svc.category_id || "",
       price: svc.price,
       deliveryDays: svc.deliveryDays || "",
-      image: svc.image || "",
+      images: svc.images?.length ? svc.images : svc.image ? [svc.image] : [],
+      packages: (svc.packages || []).map((p) => ({
+        name: p.name,
+        price: p.price,
+        delivery_days: p.deliveryDays || "",
+        description: p.description || "",
+        features: p.features || [],
+        popular: p.popular || false,
+      })),
     });
     setEditingId(svc.id);
     setShowForm(true);
@@ -93,13 +112,25 @@ function MyServices() {
       return;
     }
     setSaveError("");
+    const packages = form.packages
+      .filter((p) => p.name?.trim() && p.price !== "" && p.price != null)
+      .map((p) => ({
+        name: p.name.trim(),
+        price: Number(p.price),
+        delivery_days: Number(p.delivery_days) || 3,
+        description: p.description?.trim() || "",
+        popular: !!p.popular,
+        features: (p.features || []).filter((f) => f.trim()),
+      }));
     const payload = {
       title: form.title,
       description: form.description,
       category_id: Number(form.category_id),
       price: Number(form.price),
       delivery_days: Number(form.deliveryDays) || 3,
-      image: form.image || null,
+      image: form.images[0] || null,
+      images: form.images,
+      packages,
     };
     try {
       if (editingId) {
@@ -125,20 +156,42 @@ function MyServices() {
     }
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFilesUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
     setIsUploading(true);
     setUploadError("");
     try {
-      const url = await uploadFile(file);
-      setForm((p) => ({ ...p, image: url }));
+      const urls = [];
+      for (const file of files.slice(0, Math.max(0, 5 - form.images.length))) {
+        urls.push(await uploadFile(file));
+      }
+      setForm((p) => ({ ...p, images: [...p.images, ...urls] }));
     } catch {
       setUploadError("Upload gagal. Pastikan file valid (maks 20MB).");
     } finally {
       setIsUploading(false);
       e.target.value = "";
     }
+  };
+
+  const removeImage = (idx) => {
+    setForm((p) => ({ ...p, images: p.images.filter((_, i) => i !== idx) }));
+  };
+
+  const addPackage = () => {
+    setForm((p) => ({ ...p, packages: [...p.packages, emptyPackage()] }));
+  };
+
+  const updatePackage = (idx, field, value) => {
+    setForm((p) => ({
+      ...p,
+      packages: p.packages.map((pkg, i) => (i === idx ? { ...pkg, [field]: value } : pkg)),
+    }));
+  };
+
+  const removePackage = (idx) => {
+    setForm((p) => ({ ...p, packages: p.packages.filter((_, i) => i !== idx) }));
   };
 
   return (
@@ -215,32 +268,135 @@ function MyServices() {
                 className="mt-1"
               />
             </div>
+
             <div className="col-span-2">
-              <label className="text-xs font-medium text-ink/50">Gambar Jasa</label>
-              <div className="mt-1 flex items-center gap-3">
-                <input
-                  id="service-file-upload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleFileUpload}
-                  disabled={isUploading}
-                />
-                <label
-                  htmlFor="service-file-upload"
-                  className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-border/50"
-                >
-                  <UploadCloud className="h-4 w-4 text-primary" />
-                  {isUploading ? "Mengupload..." : form.image ? "Ganti Gambar" : "Upload Gambar"}
-                </label>
-                {form.image && (
-                  <img
-                    src={form.image}
-                    alt="Preview jasa"
-                    className="h-12 w-12 rounded-lg border border-border object-cover"
-                  />
+              <label className="text-xs font-medium text-ink/50">Gambar Jasa (maks 5)</label>
+              <div className="mt-2 flex flex-wrap gap-3">
+                {form.images.map((url, i) => (
+                  <div key={url} className="relative">
+                    <img
+                      src={url}
+                      alt={`Gambar ${i + 1}`}
+                      className="h-16 w-20 rounded-lg border border-border object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-sm hover:bg-red-600"
+                      aria-label="Hapus gambar"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+                {form.images.length < 5 && (
+                  <>
+                    <input
+                      id="service-file-upload"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      onChange={handleFilesUpload}
+                      disabled={isUploading}
+                    />
+                    <label
+                      htmlFor="service-file-upload"
+                      className="flex h-16 w-20 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border text-ink/40 transition-colors hover:border-primary/40 hover:text-ink/60"
+                    >
+                      <UploadCloud className="h-4 w-4 text-primary" />
+                      <span className="text-[10px]">{isUploading ? "..." : "Upload"}</span>
+                    </label>
+                  </>
                 )}
-                {uploadError && <span className="text-xs text-red-500">{uploadError}</span>}
+              </div>
+              {uploadError && <span className="mt-1 block text-xs text-red-500">{uploadError}</span>}
+            </div>
+
+            <div className="col-span-2">
+              <label className="text-xs font-medium text-ink/50">Paket Harga</label>
+              <p className="mt-0.5 text-xs text-ink/40">
+                Opsional — kamu yang tentukan opsi &amp; harganya sendiri. Biarkan kosong jika hanya 1 harga.
+              </p>
+              <div className="mt-2 space-y-3">
+                {form.packages.map((pkg, i) => (
+                  <div key={i} className="rounded-lg border border-border p-3">
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-ink/50">Nama Paket</label>
+                        <Input
+                          value={pkg.name}
+                          onChange={(e) => updatePackage(i, "name", e.target.value)}
+                          placeholder="Contoh: Basic / Bust / Standar"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink/50">Harga (Rp)</label>
+                        <Input
+                          type="number"
+                          value={pkg.price}
+                          onChange={(e) => updatePackage(i, "price", e.target.value)}
+                          placeholder="250000"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-ink/50">Estimasi Hari</label>
+                        <Input
+                          type="number"
+                          value={pkg.delivery_days}
+                          onChange={(e) => updatePackage(i, "delivery_days", e.target.value)}
+                          placeholder="3"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div className="flex items-end pb-1">
+                        <label className="flex cursor-pointer items-center gap-2 text-sm text-ink/70">
+                          <input
+                            type="checkbox"
+                            checked={pkg.popular}
+                            onChange={(e) => updatePackage(i, "popular", e.target.checked)}
+                            className="h-4 w-4 accent-primary"
+                          />
+                          Paket populer
+                        </label>
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-xs font-medium text-ink/50">Deskripsi Paket</label>
+                        <Textarea
+                          value={pkg.description}
+                          onChange={(e) => updatePackage(i, "description", e.target.value)}
+                          placeholder="Isi paket ini mencakup apa..."
+                          rows={2}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-xs font-medium text-ink/50">Fitur (satu per baris)</label>
+                        <Textarea
+                          value={pkg.features.join("\n")}
+                          onChange={(e) => updatePackage(i, "features", e.target.value.split("\n"))}
+                          placeholder={"1 konsep logo\nFile PNG & JPG"}
+                          rows={2}
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removePackage(i)}
+                      className="mt-2 flex items-center gap-1 text-xs text-red-500 hover:text-red-600"
+                    >
+                      <X className="h-3 w-3" />Hapus paket
+                    </button>
+                  </div>
+                ))}
+                {form.packages.length < 5 && (
+                  <Button type="button" variant="outline" size="sm" onClick={addPackage}>
+                    <Plus className="h-4 w-4" />Tambah Paket
+                  </Button>
+                )}
               </div>
             </div>
           </div>

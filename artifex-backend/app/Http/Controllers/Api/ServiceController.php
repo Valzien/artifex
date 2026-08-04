@@ -56,7 +56,7 @@ class ServiceController extends Controller
                     'reviews' => $service->user->reviews_count ?? 0,
                 ],
                 'price' => $service->price,
-                'image' => $service->image,
+                'image' => $service->images[0] ?? $service->image,
                 'tags' => $service->tags ?? [],
                 'deliveryDays' => $service->delivery_days,
             ];
@@ -86,8 +86,8 @@ class ServiceController extends Controller
                 'reviews' => $service->user->reviews_count ?? 0,
             ],
             'price' => $service->price,
-            'image' => $service->image,
-            'images' => $service->image ? [$service->image] : [],
+            'image' => $service->images[0] ?? $service->image,
+            'images' => $service->images ?: ($service->image ? [$service->image] : []),
             'tags' => $service->tags ?? [],
             'deliveryDays' => $service->delivery_days,
             'packages' => $service->packages->map(function ($pkg) {
@@ -130,8 +130,8 @@ class ServiceController extends Controller
             'description' => $service->description,
             'category' => $service->category->name ?? null,
             'price' => $service->price,
-            'image' => $service->image,
-            'images' => $service->image ? [$service->image] : [],
+            'image' => $service->images[0] ?? $service->image,
+            'images' => $service->images ?: ($service->image ? [$service->image] : []),
             'tags' => $service->tags ?? [],
             'deliveryDays' => $service->delivery_days,
             'packages' => $service->packages->map(function ($pkg) {
