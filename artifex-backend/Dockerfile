@@ -1,10 +1,10 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+RUN composer install --no-dev --no-scripts --prefer-dist --no-interaction
 
 FROM php:8.3-fpm-alpine AS app
-RUN apk add --no-cache nginx supervisor libpq libzip libpng libjpeg-turbo freetype icu-libs \
+RUN apk add --no-cache nginx supervisor gettext libpq libzip libpng libjpeg-turbo freetype icu-libs \
     && apk add --no-cache --virtual .build-deps postgresql-dev $PHPIZE_DEPS zlib-dev libzip-dev libpng-dev libjpeg-turbo-dev freetype-dev icu-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_pgsql pdo_mysql bcmath gd zip intl \
