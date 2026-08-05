@@ -16,7 +16,6 @@ function Portfolio() {
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     getPublicPortfolios({ category: category || undefined }).then((data) => {
       if (!cancelled) { setItems(data); setLoading(false); }
     });
@@ -33,7 +32,7 @@ function Portfolio() {
 
       <div className="mt-4 flex flex-wrap gap-2">
         <button
-          onClick={() => setCategory("")}
+          onClick={() => { setLoading(true); setCategory(""); }}
           className={cn("rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
             !category ? "bg-primary text-primary-foreground" : "bg-surface text-ink/60 hover:text-ink")}
         >
@@ -42,7 +41,7 @@ function Portfolio() {
         {categories.map((c) => (
           <button
             key={c}
-            onClick={() => setCategory(c)}
+            onClick={() => { setLoading(true); setCategory(c); }}
             className={cn("rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
               category === c ? "bg-primary text-primary-foreground" : "bg-surface text-ink/60 hover:text-ink")}
           >

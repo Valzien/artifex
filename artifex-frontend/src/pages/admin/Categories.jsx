@@ -11,7 +11,6 @@ function AdminCategories() {
   const [modal, setModal] = useState(null); // { mode: "create" } | { mode: "edit", category }
 
   const load = () => {
-    setLoading(true);
     getAdminCategories({ search: search || undefined })
       .then((res) => setCategories(res.data))
       .finally(() => setLoading(false));

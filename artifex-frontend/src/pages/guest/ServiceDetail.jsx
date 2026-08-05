@@ -34,6 +34,7 @@ function ServiceDetailContent({ id }) {
     getServiceDetail(id).then((data) => {
       if (mounted) {
         setService(data);
+        setSelectedPackage(data.packages?.[0]?.name ?? "");
         setLoading(false);
       }
     }).catch(() => {
@@ -41,13 +42,6 @@ function ServiceDetailContent({ id }) {
     });
     return () => { mounted = false; };
   }, [id]);
-
-  useEffect(() => {
-    const packages = service?.packages ?? [];
-    if (packages.length && !packages.some((p) => p.name === selectedPackage)) {
-      setSelectedPackage(packages[0].name);
-    }
-  }, [service, selectedPackage]);
 
   useEffect(() => {
     if (!service || !isAuthenticated || role !== "client") return;

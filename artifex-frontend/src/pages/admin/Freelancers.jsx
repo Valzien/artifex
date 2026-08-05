@@ -8,8 +8,7 @@ function AdminFreelancers() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
 
-  const load = (keepLoading) => {
-    if (!keepLoading) setLoading(true);
+  const load = () => {
     getUsers({ role: "freelancer" }).then((res) => {
       setFreelancers(res.data);
       setLoading(false);

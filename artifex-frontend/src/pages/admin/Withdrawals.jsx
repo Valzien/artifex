@@ -22,7 +22,6 @@ function AdminWithdrawals() {
 
   useEffect(() => {
     let mounted = true;
-    setLoading(true);
     getAdminWithdrawals({ status: statusFilter || undefined }).then((res) => {
       if (mounted) {
         setWithdrawals(res.data);
