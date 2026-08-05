@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { getServiceDetail } from "@/services/api/services";
+import { getFavorites, toggleFavorite } from "@/services/api/favorites";
 import { formatCurrency } from "@/constants/orderStatus";
 import { ReviewCard } from "@/components/shared/ReviewCard";
+import { useToast } from "@/components/shared/Toast";
 import useAuthStore from "@/store/useAuthStore";
 
 function ServiceDetail() {
@@ -18,10 +20,13 @@ function ServiceDetailContent({ id }) {
   const navigate = useNavigate();
   const role = useAuthStore((s) => s.role);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const toast = useToast();
   const [selectedPackage, setSelectedPackage] = useState("");
   const [activeImage, setActiveImage] = useState(0);
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [liking, setLiking] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -42,6 +47,43 @@ function ServiceDetailContent({ id }) {
       setSelectedPackage(packages[0].name);
     }
   }, [service, selectedPackage]);
+
+  useEffect(() => {
+    if (!service || !isAuthenticated || role !== "client") return;
+    let mounted = true;
+    getFavorites()
+      .then((favs) => {
+        if (mounted && favs.some((f) => f.id === service.id)) setIsFavorite(true);
+      })
+      .catch(() => {});
+    return () => { mounted = false; };
+  }, [service, isAuthenticated, role]);
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) return navigate("/login");
+    if (role !== "client") return toast.warning("Fitur ini khusus akun client");
+    if (liking) return;
+    setLiking(true);
+    try {
+      const res = await toggleFavorite(service.id);
+      setIsFavorite(res.isFavorite);
+      toast.success(res.isFavorite ? "Ditambahkan ke favorit" : "Dihapus dari favorit");
+    } catch {
+      toast.error("Gagal menyimpan favorit");
+    } finally {
+      setLiking(false);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link disalin ke clipboard");
+    } catch {
+      toast.info(url);
+    }
+  };
 
   if (loading) {
     return (
@@ -122,8 +164,12 @@ function ServiceDetailContent({ id }) {
                 </div>
               </div>
               <div className="ml-auto flex gap-2">
-                <Button variant="ghost" size="icon"><Heart className="h-4 w-4" /></Button>
-                <Button variant="ghost" size="icon"><Share2 className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={handleToggleFavorite} disabled={liking} aria-label="Simpan ke favorit">
+                  <Heart className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleShare} aria-label="Bagikan">
+                  <Share2 className="h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
