@@ -31,8 +31,8 @@ function Login() {
   const onSubmit = async (data) => {
     setError("");
     try {
-      const user = await login(data.email, data.password);
-      navigate(`/${user.role}/dashboard`);
+      await login(data.email, data.password);
+      navigate("/explore");
     } catch (err) {
       setError(err.response?.data?.message || "Email atau password salah");
     }

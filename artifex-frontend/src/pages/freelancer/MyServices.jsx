@@ -10,6 +10,7 @@ import {
   Image,
   UploadCloud,
   X,
+  AlertTriangle,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Dialog } from "@/components/shared/Dialog";
 import {
   getFreelancerServices,
   addFreelancerService,
@@ -66,6 +68,9 @@ function MyServices() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [saveError, setSaveError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -107,11 +112,13 @@ function MyServices() {
   };
 
   const handleSave = async () => {
+    if (isSaving) return;
     if (!form.title || !form.description.trim() || !form.category_id || !form.price) {
       setSaveError("Lengkapi judul, deskripsi, kategori, dan harga jasa.");
       return;
     }
     setSaveError("");
+    setIsSaving(true);
     const packages = form.packages
       .filter((p) => p.name?.trim() && p.price !== "" && p.price != null)
       .map((p) => ({
@@ -144,15 +151,28 @@ function MyServices() {
       setShowForm(false);
     } catch {
       setSaveError("Gagal menyimpan. Cek kembali isian form.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget || isDeleting) return;
+    setIsDeleting(true);
+    setSaveError("");
     try {
-      await deleteFreelancerService(id);
-      setServices((prev) => prev.filter((s) => s.id !== id));
+      await deleteFreelancerService(deleteTarget);
+      setServices((prev) => prev.filter((s) => s.id !== deleteTarget));
+      setDeleteTarget(null);
     } catch {
       setSaveError("Gagal menghapus jasa.");
+      setDeleteTarget(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -402,8 +422,8 @@ function MyServices() {
           </div>
           <div className="mt-4 flex items-center gap-2">
             {saveError && <span className="text-xs text-red-500">{saveError}</span>}
-            <Button size="sm" onClick={handleSave}>{editingId ? "Update" : "Simpan"}</Button>
-            <Button size="sm" variant="ghost" onClick={() => { resetForm(); setShowForm(false); }}>Batal</Button>
+            <Button size="sm" onClick={handleSave} isLoading={isSaving}>{editingId ? "Update" : "Simpan"}</Button>
+            <Button size="sm" variant="ghost" disabled={isSaving} onClick={() => { resetForm(); setShowForm(false); }}>Batal</Button>
           </div>
         </Card>
       )}
@@ -456,10 +476,10 @@ function MyServices() {
               </div>
               <p className="text-sm font-semibold text-ink">{formatCurrency(svc.price)}</p>
               <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(svc)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isSaving || isDeleting} onClick={() => handleEdit(svc)}>
                   <Edit3 className="h-4 w-4 text-ink/50" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(svc.id)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDeleting} onClick={() => handleDelete(svc.id)}>
                   <Trash2 className="h-4 w-4 text-red-400" />
                 </Button>
               </div>
@@ -467,6 +487,25 @@ function MyServices() {
           ))
         )}
       </div>
+
+      <Dialog isOpen={deleteTarget !== null} onClose={() => setDeleteTarget(null)} title="Hapus jasa">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+          </div>
+          <p className="text-sm text-ink/70">
+            Yakin ingin menghapus jasa ini? Tindakan ini tidak bisa dibatalkan.
+          </p>
+        </div>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button size="sm" variant="ghost" disabled={isDeleting} onClick={() => setDeleteTarget(null)}>
+            Batal
+          </Button>
+          <Button size="sm" variant="danger" isLoading={isDeleting} onClick={confirmDelete}>
+            Hapus
+          </Button>
+        </div>
+      </Dialog>
     </div>
   );
 }

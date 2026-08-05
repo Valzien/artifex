@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, Search, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, ChevronDown, Search, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { getCategories } from "@/services/api/categories";
 import useAuthStore from "@/store/useAuthStore";
+
+function isAvatarUrl(value) {
+  return typeof value === "string" && /^(https?:\/\/|\/|data:)/.test(value);
+}
 
 const NAV_LINKS = [
   { label: "Explore", to: "/explore" },
@@ -18,7 +22,6 @@ function Navbar() {
   const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const role = useAuthStore((s) => s.role);
-  const logout = useAuthStore((s) => s.logout);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -26,11 +29,6 @@ function Navbar() {
   useEffect(() => {
     getCategories().then((cats) => setCategories(cats.map((c) => ({ name: c.name, slug: c.slug }))));
   }, []);
-
-  const handleLogout = async () => {
-    await logout();
-    navigate("/");
-  };
 
   const dashboardPath = isAuthenticated ? `/${role}/dashboard` : null;
 
@@ -113,14 +111,19 @@ function Navbar() {
                 </Button>
               </Link>
               <div className="flex items-center gap-2 rounded-lg bg-surface px-3 py-1.5">
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                  {user?.name?.charAt(0) || "U"}
-                </div>
+                {isAvatarUrl(user?.avatar) ? (
+                  <img
+                    src={user.avatar}
+                    alt={user?.name}
+                    className="h-7 w-7 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {user?.name?.charAt(0) || "U"}
+                  </div>
+                )}
                 <span className="text-sm font-medium text-ink">{user?.name}</span>
               </div>
-              <Button variant="ghost" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4" />
-              </Button>
             </>
           ) : (
             <>
@@ -166,14 +169,9 @@ function Navbar() {
           ))}
           <div className="mt-2 flex flex-col gap-2 border-t border-border pt-3">
             {isAuthenticated ? (
-              <>
-                <Link to={dashboardPath}>
-                  <Button variant="outline" size="sm" className="w-full">Dashboard</Button>
-                </Link>
-                <Button variant="ghost" size="sm" className="w-full" onClick={handleLogout}>
-                  Keluar
-                </Button>
-              </>
+              <Link to={dashboardPath}>
+                <Button variant="outline" size="sm" className="w-full">Dashboard</Button>
+              </Link>
             ) : (
               <>
                 <Link to="/login">

@@ -10,6 +10,7 @@ import {
   Image,
   Video,
   UploadCloud,
+  AlertTriangle,
 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -17,6 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Dialog } from "@/components/shared/Dialog";
 import {
   getFreelancerProducts,
   addFreelancerProduct,
@@ -61,6 +63,9 @@ function MyProducts() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [saveError, setSaveError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
     let mounted = true;
@@ -140,11 +145,13 @@ function MyProducts() {
   };
 
   const handleSave = async () => {
+    if (isSaving) return;
     if (!form.title || !form.category_id || !form.price) {
       setSaveError("Lengkapi judul, kategori, dan harga produk.");
       return;
     }
     setSaveError("");
+    setIsSaving(true);
     const payload = {
       title: form.title,
       description: form.description || null,
@@ -175,15 +182,28 @@ function MyProducts() {
       setShowForm(false);
     } catch {
       setSaveError("Gagal menyimpan. Cek kembali isian form.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTarget || isDeleting) return;
+    setIsDeleting(true);
+    setSaveError("");
     try {
-      await deleteFreelancerProduct(id);
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      await deleteFreelancerProduct(deleteTarget);
+      setProducts((prev) => prev.filter((p) => p.id !== deleteTarget));
+      setDeleteTarget(null);
     } catch {
       setSaveError("Gagal menghapus produk.");
+      setDeleteTarget(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -354,12 +374,13 @@ function MyProducts() {
           </div>
           <div className="mt-4 flex items-center gap-2">
             {saveError && <span className="text-xs text-red-500">{saveError}</span>}
-            <Button size="sm" onClick={handleSave}>
+            <Button size="sm" onClick={handleSave} isLoading={isSaving}>
               {editingId ? "Update" : "Simpan"}
             </Button>
             <Button
               size="sm"
               variant="ghost"
+              disabled={isSaving}
               onClick={() => {
                 resetForm();
                 setShowForm(false);
@@ -415,10 +436,10 @@ function MyProducts() {
               </div>
               <p className="text-sm font-semibold text-ink">{formatCurrency(prod.price)}</p>
               <div className="flex gap-1">
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(prod)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isSaving || isDeleting} onClick={() => handleEdit(prod)}>
                   <Edit3 className="h-4 w-4 text-ink/50" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(prod.id)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8" disabled={isDeleting} onClick={() => handleDelete(prod.id)}>
                   <Trash2 className="h-4 w-4 text-red-400" />
                 </Button>
               </div>
@@ -426,6 +447,25 @@ function MyProducts() {
           ))
         )}
       </div>
+
+      <Dialog isOpen={deleteTarget !== null} onClose={() => setDeleteTarget(null)} title="Hapus produk">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+          </div>
+          <p className="text-sm text-ink/70">
+            Yakin ingin menghapus produk ini? Tindakan ini tidak bisa dibatalkan.
+          </p>
+        </div>
+        <div className="mt-6 flex justify-end gap-3">
+          <Button size="sm" variant="ghost" disabled={isDeleting} onClick={() => setDeleteTarget(null)}>
+            Batal
+          </Button>
+          <Button size="sm" variant="danger" isLoading={isDeleting} onClick={confirmDelete}>
+            Hapus
+          </Button>
+        </div>
+      </Dialog>
     </div>
   );
 }
