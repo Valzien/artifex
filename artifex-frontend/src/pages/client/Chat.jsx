@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { getConversations, getMessages, sendMessage, startConversation, payChatMessage } from "@/services/api/chat";
 import { uploadFile } from "@/services/api/upload";
 import ChatBubble from "@/components/shared/ChatBubble";
+import { Avatar } from "@/components/shared/Avatar";
 import { cn } from "@/lib/utils";
 
 function ConversationListSkeleton() {
@@ -224,9 +225,7 @@ function Chat() {
                 )}
               >
                 <div className="relative shrink-0">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                    {conv.freelancer.avatar}
-                  </div>
+                  <Avatar src={conv.freelancer.avatar} name={conv.freelancer.name} className="h-10 w-10 text-sm" />
                   {conv.freelancer.isOnline && (
                     <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-400" />
                   )}
@@ -284,9 +283,7 @@ function Chat() {
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <div className="relative">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                  {activeConv.freelancer.avatar}
-                </div>
+                <Avatar src={activeConv.freelancer.avatar} name={activeConv.freelancer.name} className="h-9 w-9 text-sm" />
                 {activeConv.freelancer.isOnline && (
                   <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-emerald-400" />
                 )}

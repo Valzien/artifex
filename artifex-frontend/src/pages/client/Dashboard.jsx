@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { StatCard } from "@/components/shared/StatCard";
+import { Avatar } from "@/components/shared/Avatar";
 import { getDashboard } from "@/services/api/dashboard";
 import { ORDER_STATUS, formatCurrency, formatDate } from "@/constants/orderStatus";
 
@@ -116,9 +117,7 @@ function ClientDashboard() {
                   to={`/client/orders/${order.id}`}
                   className="flex items-center gap-4 border-b border-border px-6 py-4 transition-colors last:border-0 hover:bg-surface"
                 >
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                    {order.freelancer.avatar}
-                  </div>
+                  <Avatar src={order.freelancer.avatar} name={order.freelancer.name} className="h-10 w-10 text-sm" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-ink">
                       {order.serviceName}

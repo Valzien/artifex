@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { getConversations, getMessages, sendMessage } from "@/services/api/freelancerChat";
 import { uploadFile } from "@/services/api/upload";
 import ChatBubble from "@/components/shared/ChatBubble";
+import { Avatar } from "@/components/shared/Avatar";
 import { cn } from "@/lib/utils";
 
 function ConversationListSkeleton() {
@@ -191,7 +192,7 @@ function FreelancerChat() {
             <button key={conv.id} onClick={() => selectConversation(conv)}
               className={cn("flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-surface", activeConv?.id === conv.id && "bg-primary/5")}>
               <div className="relative shrink-0">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{conv.client.avatar}</div>
+                <Avatar src={conv.client.avatar} name={conv.client.name} className="h-10 w-10 text-sm" />
                 {conv.client.isOnline && <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background bg-emerald-400" />}
               </div>
               <div className="min-w-0 flex-1">
@@ -220,7 +221,7 @@ function FreelancerChat() {
             <div className="flex items-center gap-3 border-b border-border bg-surface px-4 py-3">
               <button onClick={() => setActiveConv(null)} className="rounded-lg p-1 text-ink/60 hover:bg-surface md:hidden"><ArrowLeft className="h-5 w-5" /></button>
               <div className="relative">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{activeConv.client.avatar}</div>
+                <Avatar src={activeConv.client.avatar} name={activeConv.client.name} className="h-9 w-9 text-sm" />
                 {activeConv.client.isOnline && <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-background bg-emerald-400" />}
               </div>
               <div className="min-w-0">

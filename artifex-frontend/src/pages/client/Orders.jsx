@@ -4,6 +4,7 @@ import { ChevronRight, Inbox } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { TabBar } from "@/components/shared/TabBar";
+import { Avatar } from "@/components/shared/Avatar";
 import { getOrders } from "@/services/api/orders";
 import { ORDER_STATUS, ORDER_STATUS_TABS, formatCurrency, formatDate } from "@/constants/orderStatus";
 
@@ -64,9 +65,7 @@ function Orders() {
               to={`/client/orders/${order.id}`}
               className="flex items-center gap-4 rounded-xl border border-border bg-surface p-4 transition-colors hover:border-primary/40 hover:bg-surface"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                {order.freelancer.avatar}
-              </div>
+              <Avatar src={order.freelancer.avatar} name={order.freelancer.name} className="h-12 w-12 text-sm" />
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2 truncate text-sm font-medium text-ink">
                   {order.serviceName}
