@@ -105,7 +105,13 @@ function ServiceDetailContent({ id }) {
             <Badge variant="primary" className="mb-2">{service.category}</Badge>
             <h1 className="text-2xl font-semibold text-ink line-clamp-2">{service.title}</h1>
             <div className="mt-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">{freelancer?.name?.[0]}</div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
+                {freelancer?.avatar && /^(https?:\/\/|\/|data:)/.test(freelancer.avatar) ? (
+                  <img src={freelancer.avatar} alt={freelancer.name} className="h-10 w-10 rounded-full object-cover" />
+                ) : (
+                  freelancer?.name?.[0]
+                )}
+              </div>
               <div className="min-w-0">
                 <Link to={`/freelancer/${freelancer?.id ?? 1}`} className="text-sm font-medium text-ink hover:text-primary truncate">{freelancer?.name}</Link>
                 <div className="flex items-center gap-2 text-xs text-ink/50">
@@ -140,7 +146,7 @@ function ServiceDetailContent({ id }) {
             </div>
             <div className="mt-4">
               {service.reviews?.length > 0 ? service.reviews.map((review) => (
-                <ReviewCard key={review.id} review={{ user: review.userName, date: review.createdAt, rating: review.rating, comment: review.comment }} />
+                <ReviewCard key={review.id} review={{ user: review.userName, clientAvatar: review.clientAvatar, date: review.createdAt, rating: review.rating, comment: review.comment }} />
               )) : (
                 <p className="text-sm text-ink/50">Belum ada review</p>
               )}
@@ -213,7 +219,13 @@ function ServiceDetailContent({ id }) {
             <Card>
               <h3 className="mb-3 text-sm font-semibold text-ink">Tentang Freelancer</h3>
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-medium text-primary">{freelancer?.name?.[0]}</div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-medium text-primary">
+                {freelancer?.avatar && /^(https?:\/\/|\/|data:)/.test(freelancer.avatar) ? (
+                  <img src={freelancer.avatar} alt={freelancer.name} className="h-12 w-12 rounded-full object-cover" />
+                ) : (
+                  freelancer?.name?.[0]
+                )}
+              </div>
                 <div>
                   <p className="font-medium text-ink">{freelancer?.name}</p>
                   <p className="text-xs text-ink/50">{freelancer?.location}</p>

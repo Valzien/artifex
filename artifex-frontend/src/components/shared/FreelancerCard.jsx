@@ -3,6 +3,10 @@ import { MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { StarRating } from "@/components/shared/StarRating";
 
+function isAvatarUrl(value) {
+  return typeof value === "string" && /^(https?:\/\/|\/|data:)/.test(value);
+}
+
 export function FreelancerCard({ freelancer }) {
   return (
     <Link
@@ -11,9 +15,17 @@ export function FreelancerCard({ freelancer }) {
     >
       <div className="flex items-start gap-4">
         <div className="relative">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
-            {freelancer.name?.[0] || "F"}
-          </div>
+          {isAvatarUrl(freelancer.avatar) ? (
+            <img
+              src={freelancer.avatar}
+              alt={freelancer.name}
+              className="h-14 w-14 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-lg font-semibold text-primary">
+              {freelancer.name?.[0] || "F"}
+            </div>
+          )}
           {freelancer.isOnline && (
             <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-background bg-emerald-400" />
           )}

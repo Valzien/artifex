@@ -3,6 +3,10 @@ import { Star, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/constants/orderStatus";
 
+function isAvatarUrl(value) {
+  return typeof value === "string" && /^(https?:\/\/|\/|data:)/.test(value);
+}
+
 export function ServiceCard({ service, to, onRemove }) {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-border bg-surface shadow-card transition-shadow hover:shadow-md">
@@ -28,9 +32,17 @@ export function ServiceCard({ service, to, onRemove }) {
           <h3 className="line-clamp-2 text-sm font-medium text-ink">{service.title}</h3>
 
           <div className="mt-2 flex items-center gap-2">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-              {service.freelancer?.name?.[0] || "F"}
-            </div>
+            {isAvatarUrl(service.freelancer?.avatar) ? (
+              <img
+                src={service.freelancer.avatar}
+                alt={service.freelancer?.name}
+                className="h-6 w-6 shrink-0 rounded-full object-cover"
+              />
+            ) : (
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                {service.freelancer?.name?.[0] || "F"}
+              </div>
+            )}
             <span className="text-xs text-ink/60">{service.freelancer?.name}</span>
             <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
             <span className="text-xs text-ink/60">{service.freelancer?.rating}</span>

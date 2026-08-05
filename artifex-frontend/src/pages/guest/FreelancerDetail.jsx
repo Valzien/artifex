@@ -57,7 +57,15 @@ function FreelancerDetail() {
           <Card>
             <div className="flex items-start gap-5">
               <div className="relative">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-medium text-primary">{freelancer.name[0]}</div>
+                {freelancer.avatar && /^(https?:\/\/|\/|data:)/.test(freelancer.avatar) ? (
+                  <img
+                    src={freelancer.avatar}
+                    alt={freelancer.name}
+                    className="h-20 w-20 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-medium text-primary">{freelancer.name[0]}</div>
+                )}
                 <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full border-2 border-white bg-emerald-400" />
               </div>
               <div className="flex-1">

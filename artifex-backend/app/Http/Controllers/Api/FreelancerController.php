@@ -61,7 +61,7 @@ class FreelancerController extends Controller
                 },
                 'portfolios',
                 'reviewsReceived' => function ($q) {
-                    $q->with(['user:id,name', 'order.service:id,title']);
+                    $q->with(['user:id,name,avatar', 'order.service:id,title']);
                 },
             ])
             ->find($id);
@@ -119,6 +119,7 @@ class FreelancerController extends Controller
                     return [
                         'id' => $r->id,
                         'user' => $r->user->name ?? 'Anonymous',
+                        'clientAvatar' => $r->user->avatar ?? null,
                         'service' => $r->order->service->title ?? 'Unknown Service',
                         'rating' => $r->rating,
                         'comment' => $r->comment,

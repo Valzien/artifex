@@ -1,5 +1,9 @@
 import { StarRating } from "@/components/shared/StarRating";
 
+function isAvatarUrl(value) {
+  return typeof value === "string" && /^(https?:\/\/|\/|data:)/.test(value);
+}
+
 export function ReviewCard({ review, showAvatar = true }) {
   const name = review.user || review.clientName;
   const avatar = review.clientAvatar;
@@ -9,9 +13,13 @@ export function ReviewCard({ review, showAvatar = true }) {
     <div className="border-t border-border py-4 first:border-0 first:pt-0">
       <div className="flex items-start gap-3">
         {showAvatar && (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-xs font-semibold text-ink/60">
-            {avatar || name?.[0] || "U"}
-          </div>
+          isAvatarUrl(avatar) ? (
+            <img src={avatar} alt={name} className="h-8 w-8 shrink-0 rounded-full object-cover" />
+          ) : (
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-xs font-semibold text-ink/60">
+              {avatar || name?.[0] || "U"}
+            </div>
+          )
         )}
 
         <div className="min-w-0 flex-1">

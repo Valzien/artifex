@@ -52,6 +52,7 @@ class ServiceController extends Controller
                 'freelancer' => [
                     'id' => $service->user->id,
                     'name' => $service->user->name,
+                    'avatar' => $service->user->avatar,
                     'rating' => $service->user->rating ?? 0,
                     'reviews' => $service->user->reviews_count ?? 0,
                 ],
@@ -82,6 +83,7 @@ class ServiceController extends Controller
             'freelancer' => [
                 'id' => $service->user->id,
                 'name' => $service->user->name,
+                'avatar' => $service->user->avatar,
                 'rating' => $service->user->rating ?? 0,
                 'reviews' => $service->user->reviews_count ?? 0,
             ],
@@ -111,7 +113,7 @@ class ServiceController extends Controller
             'user:id,name,avatar,bio,location',
             'packages',
             'category:id,name,slug',
-            'reviews.user:id,name',
+            'reviews.user:id,name,avatar',
         ])
             ->where('status', 'active')
             ->find($id);
@@ -160,6 +162,7 @@ class ServiceController extends Controller
                 return [
                     'id' => $review->id,
                     'userName' => $review->user->name ?? 'Anonymous',
+                    'clientAvatar' => $review->user->avatar ?? null,
                     'rating' => $review->rating,
                     'comment' => $review->comment,
                     'createdAt' => $review->created_at,

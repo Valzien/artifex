@@ -4,6 +4,10 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatCurrency } from "@/constants/orderStatus";
 
+function isAvatarUrl(value) {
+  return typeof value === "string" && /^(https?:\/\/|\/|data:)/.test(value);
+}
+
 function ProductCard({ product }) {
   return (
     <Link to={`/product/${product.id}`}>
@@ -30,9 +34,17 @@ function ProductCard({ product }) {
           <p className="mt-1 text-xs text-ink/50 line-clamp-2">{product.description}</p>
           <div className="mt-3 flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-ink/50">
-              <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
-                {product.freelancer?.name?.[0]}
-              </div>
+              {isAvatarUrl(product.freelancer?.avatar) ? (
+                <img
+                  src={product.freelancer.avatar}
+                  alt={product.freelancer?.name}
+                  className="h-5 w-5 rounded-full object-cover"
+                />
+              ) : (
+                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
+                  {product.freelancer?.name?.[0]}
+                </div>
+              )}
               <span>{product.freelancer?.name}</span>
             </div>
             <div className="flex items-center gap-1 text-xs text-ink/40">
