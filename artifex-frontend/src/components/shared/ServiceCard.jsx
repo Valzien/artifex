@@ -16,6 +16,8 @@ export function ServiceCard({ service, to, onRemove }) {
             <img
               src={service.image}
               alt={service.title}
+              loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover"
             />
           ) : (
@@ -36,6 +38,8 @@ export function ServiceCard({ service, to, onRemove }) {
               <img
                 src={service.freelancer.avatar}
                 alt={service.freelancer?.name}
+                loading="lazy"
+                decoding="async"
                 className="h-6 w-6 shrink-0 rounded-full object-cover"
               />
             ) : (

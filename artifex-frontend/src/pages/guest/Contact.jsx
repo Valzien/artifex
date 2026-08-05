@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Card } from "@/components/ui/Card";
 import { submitContact } from "@/services/api/contact";
+import { Seo } from "@/components/shared/Seo";
 
 const CONTACT_INFO = [
   {
@@ -56,6 +57,7 @@ function Contact() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+      <Seo title="Hubungi Kami" description="Hubungi tim Artifex untuk pertanyaan, saran, atau kerjasama. Kami siap membantu." path="/contact" />
       {/* Header */}
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-semibold text-ink">Hubungi Kami</h1>

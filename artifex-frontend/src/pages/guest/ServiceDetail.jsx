@@ -9,6 +9,7 @@ import { getFavorites, toggleFavorite } from "@/services/api/favorites";
 import { formatCurrency } from "@/constants/orderStatus";
 import { ReviewCard } from "@/components/shared/ReviewCard";
 import { useToast } from "@/components/shared/Toast";
+import { Seo } from "@/components/shared/Seo";
 import useAuthStore from "@/store/useAuthStore";
 
 function ServiceDetail() {
@@ -111,6 +112,12 @@ function ServiceDetailContent({ id }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <Seo
+        title={service.title}
+        description={service.description?.slice(0, 160)}
+        image={service.image}
+        path={`/service/${service.id}`}
+      />
       <nav className="mb-6 flex items-center gap-2 text-sm text-ink/50">
         <Link to="/" className="hover:text-ink">Home</Link>
         <ChevronRight className="h-3 w-3" />
@@ -136,7 +143,7 @@ function ServiceDetailContent({ id }) {
               {service.images?.map((img, idx) => (
                 <button key={idx} onClick={() => setActiveImage(idx)}
                   className={`h-16 w-20 overflow-hidden rounded-lg border-2 bg-surface transition-colors ${activeImage === idx ? "border-primary" : "border-transparent hover:border-border"}`}>
-                  <img src={img} alt="" className="h-full w-full object-cover" />
+                  <img src={img} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>

@@ -11,7 +11,10 @@ class FreelancerController extends Controller
     public function index(Request $request)
     {
         $query = User::where('role', 'freelancer')
-            ->withCount('services');
+            ->withCount('services')
+            ->withCount('reviewsReceived')
+            ->withAvg('reviewsReceived', 'rating')
+            ->withCount(['freelancerOrders' => fn ($q) => $q->where('status', 'completed')]);
 
         if ($request->filled('specialty')) {
             $query->where('specialty', $request->specialty);
@@ -27,18 +30,14 @@ class FreelancerController extends Controller
         }
 
         $freelancers = $query->get()->map(function ($user) {
-            $reviewsCount = $user->reviewsReceived()->count();
-            $avgRating = $reviewsCount > 0 ? round($user->reviewsReceived()->avg('rating'), 1) : 0;
-            $completedOrders = $user->freelancerOrders()->where('status', 'completed')->count();
-
             return [
                 'id' => $user->id,
                 'name' => $user->name,
                 'avatar' => $user->avatar,
                 'specialty' => $user->specialty,
-                'rating' => $avgRating,
-                'reviews' => $reviewsCount,
-                'completedOrders' => $completedOrders,
+                'rating' => round((float) ($user->reviews_received_avg_rating ?? 0), 1),
+                'reviews' => (int) ($user->reviews_received_count ?? 0),
+                'completedOrders' => (int) ($user->freelancer_orders_count ?? 0),
                 'location' => $user->location,
                 'bio' => $user->bio,
                 'skills' => $user->skills ?? [],

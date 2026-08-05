@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getFaq } from "@/services/api/faq";
+import { Seo } from "@/components/shared/Seo";
 
 function FaqItem({ item }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,7 @@ function FAQ() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+      <Seo title="Pertanyaan Umum (FAQ)" description="Jawaban atas pertanyaan seputar Artifex: cara order jasa, pembayaran, review, dan menjadi freelancer." path="/faq" />
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-semibold text-ink">FAQ</h1>
         <p className="mt-3 text-ink/60">Pertanyaan yang sering ditanyakan seputar Artifex</p>

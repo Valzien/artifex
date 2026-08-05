@@ -7,6 +7,7 @@ import ProductCard from "@/components/shared/ProductCard";
 import { cn } from "@/lib/utils";
 import { getProducts } from "@/services/api/products";
 import { getCategories } from "@/services/api/categories";
+import { Seo } from "@/components/shared/Seo";
 
 function ProductCardSkeleton() {
   return (
@@ -56,6 +57,7 @@ function ExploreProducts() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <Seo title="Produk Jadi" description="Template, aset, dan produk digital siap download dari freelancer Artifex." path="/explore-products" />
       <div className="text-center">
         <h1 className="text-3xl font-bold text-ink">Produk Jadi</h1>
         <p className="mt-2 text-ink/60">Template, aset, dan produk digital siap download.</p>

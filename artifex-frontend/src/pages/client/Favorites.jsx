@@ -79,6 +79,8 @@ function Favorites() {
                   <img
                     src={service.image}
                     alt={service.title}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full rounded-t-xl object-cover"
                   />
                 ) : (

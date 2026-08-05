@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { getProductById } from "@/services/api/products";
 import { addToCart } from "@/services/api/cart";
 import { formatCurrency } from "@/constants/orderStatus";
+import { Seo } from "@/components/shared/Seo";
 import useAuthStore from "@/store/useAuthStore";
 
 function ProductDetail() {
@@ -73,6 +74,12 @@ function ProductDetail() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <Seo
+        title={product.title}
+        description={product.description?.slice(0, 160)}
+        image={product.previews?.[0]?.url}
+        path={`/product/${product.id}`}
+      />
       <nav className="mb-6 flex items-center gap-2 text-sm text-ink/50">
         <Link to="/" className="hover:text-ink">Home</Link>
         <ChevronRight className="h-3 w-3" />

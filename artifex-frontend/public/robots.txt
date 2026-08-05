@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /client
+Disallow: /freelancer
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://artifex-9c6.pages.dev/sitemap.xml

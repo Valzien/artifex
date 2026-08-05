@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import useAuthStore from "@/store/useAuthStore";
+import { Seo } from "@/components/shared/Seo";
 
 const registerSchema = z
   .object({
@@ -67,6 +68,7 @@ function Register() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4 py-8">
+      <Seo title="Daftar" description="Daftar akun Artifex sebagai client atau freelancer dan mulai berkarya." path="/register" />
       <Card className="w-full">
         <CardHeader>
           <CardTitle>Daftar Akun Baru</CardTitle>

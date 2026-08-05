@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { getFreelancerById } from "@/services/api/freelancers";
 import { formatCurrency } from "@/constants/orderStatus";
 import { ReviewCard } from "@/components/shared/ReviewCard";
+import { Seo } from "@/components/shared/Seo";
 import useAuthStore from "@/store/useAuthStore";
 
 function FreelancerDetail() {
@@ -43,6 +44,12 @@ function FreelancerDetail() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <Seo
+        title={freelancer.name}
+        description={freelancer.bio?.slice(0, 160) || `Freelancer ${freelancer.specialty} di Artifex`}
+        image={freelancer.avatar}
+        path={`/freelancer/${freelancer.id}`}
+      />
       <nav className="mb-6 flex items-center gap-2 text-sm text-ink/50">
         <Link to="/" className="hover:text-ink">Home</Link>
         <ChevronRight className="h-3 w-3" />
@@ -116,7 +123,7 @@ function FreelancerDetail() {
               {freelancer.portfolio?.length > 0 ? freelancer.portfolio.map((item) => (
                 <Link key={item.id} to={`/portfolio/${item.id}`} className="group relative aspect-[4/3] overflow-hidden rounded-lg border border-border bg-surface">
                   {item.image ? (
-                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                    <img src={item.image} alt={item.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                   ) : (
                     <div className="flex h-full items-center justify-center text-ink/20"><span className="text-3xl">🖼️</span></div>
                   )}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 import useAuthStore from "@/store/useAuthStore";
+import { Seo } from "@/components/shared/Seo";
 
 const loginSchema = z.object({
   email: z.string().email("Format email tidak valid"),
@@ -40,6 +41,7 @@ function Login() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center px-4">
+      <Seo title="Masuk" description="Masuk ke akun Artifex untuk memesan jasa freelance dan produk digital." path="/login" />
       <Card className="w-full">
         <CardHeader>
           <CardTitle>Masuk ke Artifex</CardTitle>

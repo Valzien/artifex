@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { Seo } from "@/components/shared/Seo";
 
 const STEPS = [
   {
@@ -44,6 +45,7 @@ const BENEFITS = [
 function BecomeFreelancer() {
   return (
     <div>
+      <Seo title="Jadi Freelancer" description="Mulai berkarya di Artifex: terima pesanan desain, editing, copywriting dan dapatkan penghasilan dari keahlianmu." path="/become-freelancer" />
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <h1 className="text-3xl font-semibold text-ink sm:text-4xl">

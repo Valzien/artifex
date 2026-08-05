@@ -20,7 +20,7 @@ function ProductCard({ product }) {
                 <span className="text-xs">Video Preview</span>
               </div>
             ) : (
-              <img src={product.previews[0].url} alt={product.title} className="h-full w-full object-cover" />
+              <img src={product.previews[0].url} alt={product.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             )
           ) : (
             <Package className="h-10 w-10 text-ink/15" />
@@ -38,6 +38,8 @@ function ProductCard({ product }) {
                 <img
                   src={product.freelancer.avatar}
                   alt={product.freelancer?.name}
+                  loading="lazy"
+                  decoding="async"
                   className="h-5 w-5 rounded-full object-cover"
                 />
               ) : (

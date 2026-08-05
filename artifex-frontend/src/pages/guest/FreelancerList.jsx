@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { getFreelancers } from "@/services/api/freelancers";
 import { FreelancerCard } from "@/components/shared/FreelancerCard";
 import { SearchInput } from "@/components/shared/SearchInput";
+import { Seo } from "@/components/shared/Seo";
 
 const SPECIALTIES = [
   "Graphic Design", "Video Editing", "Copywriting", "Web Development",
@@ -25,6 +26,7 @@ function FreelancerList() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <Seo title="Cari Freelancer" description="Temukan freelancer profesional di bidang desain, video editing, copywriting, web development dan lainnya di Artifex." path="/freelancers" />
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-ink">Freelancer</h1>
         <p className="mt-1 text-ink/60">Temukan freelancer terbaik untuk proyekmu</p>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getCategories } from "@/services/api/categories";
 import { CategoryCard } from "@/components/shared/CategoryCard";
+import { Seo } from "@/components/shared/Seo";
 
 function Home() {
   const [categories, setCategories] = useState([]);
@@ -15,6 +16,7 @@ function Home() {
 
   return (
     <div>
+      <Seo title="Artifex - Marketplace Freelance & Produk Digital Indonesia" description="Temukan jasa desain, video editing, copywriting, web development dan produk digital siap download dari freelancer Indonesia." path="/" />
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-4 py-24 text-center sm:px-6 lg:px-8">
         <Badge variant="primary" className="mb-4">Marketplace jasa freelance</Badge>

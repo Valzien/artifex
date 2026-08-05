@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getCategories } from "@/services/api/categories";
 import { CategoryCard } from "@/components/shared/CategoryCard";
+import { Seo } from "@/components/shared/Seo";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -12,6 +13,7 @@ function Categories() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+      <Seo title="Kategori Layanan" description="Jelajahi kategori jasa freelance di Artifex: desain, editing, copywriting, web, dan lainnya." path="/categories" />
       <div className="mb-10 text-center">
         <h1 className="text-3xl font-semibold text-ink">Kategori Layanan</h1>
         <p className="mx-auto mt-3 max-w-lg text-ink/60">Temukan freelancer ahli di berbagai bidang untuk mewujudkan proyekmu</p>

@@ -19,6 +19,8 @@ export function FreelancerCard({ freelancer }) {
             <img
               src={freelancer.avatar}
               alt={freelancer.name}
+              loading="lazy"
+              decoding="async"
               className="h-14 w-14 rounded-full object-cover"
             />
           ) : (

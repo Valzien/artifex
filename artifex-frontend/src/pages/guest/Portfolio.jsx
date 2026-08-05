@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { getPublicPortfolios } from "@/services/api/portfolio";
+import { Seo } from "@/components/shared/Seo";
 
 function Portfolio() {
   const [items, setItems] = useState([]);
@@ -24,6 +25,7 @@ function Portfolio() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <Seo title="Portfolio Freelancer" description="Karya terbaik freelancer Artifex di bidang desain, ilustrasi, dan kreatif digital." path="/portfolio" />
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-ink">Portfolio</h1>
         <p className="mt-1 text-ink/60">Karya terbaik dari para freelancer di Artifex</p>
@@ -74,7 +76,7 @@ function Portfolio() {
               className="group overflow-hidden rounded-xl border border-border bg-surface transition-colors hover:border-border"
             >
               {item.image ? (
-                <img src={item.image} alt={item.title} className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                <img src={item.image} alt={item.title} loading="lazy" decoding="async" className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105" />
               ) : (
                 <div className="flex aspect-video w-full items-center justify-center bg-gradient-to-br from-secondary/30 to-accent/20 text-4xl">
                   🎨
@@ -87,7 +89,7 @@ function Portfolio() {
                 </div>
                 <div className="mt-3 flex items-center gap-2">
                   {item.freelancer?.avatar ? (
-                    <img src={item.freelancer.avatar} alt="" className="h-6 w-6 rounded-full object-cover" />
+                    <img src={item.freelancer.avatar} alt="" loading="lazy" decoding="async" className="h-6 w-6 rounded-full object-cover" />
                   ) : (
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
                       {item.freelancer?.name?.[0] ?? "?"}

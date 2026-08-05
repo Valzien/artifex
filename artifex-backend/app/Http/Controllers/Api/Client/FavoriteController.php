@@ -10,7 +10,10 @@ class FavoriteController extends Controller
     public function index()
     {
         $favorites = Favorite::where('user_id', auth()->id())
-            ->with(['service.user:id,name,avatar', 'service.category:id,name,slug'])
+            ->with([
+                'service.user' => fn ($q) => $q->withCount('reviewsReceived')->withAvg('reviewsReceived', 'rating'),
+                'service.category:id,name,slug',
+            ])
             ->latest()
             ->get()
             ->pluck('service')
@@ -22,8 +25,9 @@ class FavoriteController extends Controller
                     'freelancer' => [
                         'id' => $service->user->id,
                         'name' => $service->user->name,
-                        'rating' => $service->user->rating ?? 0,
-                        'reviews' => $service->user->reviews_count ?? 0,
+                        'avatar' => $service->user->avatar,
+                        'rating' => round((float) ($service->user->reviews_received_avg_rating ?? 0), 1),
+                        'reviews' => (int) ($service->user->reviews_received_count ?? 0),
                     ],
                     'price' => $service->price,
                     'image' => $service->image,

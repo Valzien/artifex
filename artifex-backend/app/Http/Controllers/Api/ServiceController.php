@@ -11,7 +11,10 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $query = Service::where('status', 'active')
-            ->with(['user:id,name,avatar', 'category:id,name,slug']);
+            ->with([
+                'user' => fn ($q) => $q->withCount('reviewsReceived')->withAvg('reviewsReceived', 'rating'),
+                'category:id,name,slug',
+            ]);
 
         if ($request->filled('category')) {
             $query->whereHas('category', function ($q) use ($request) {
@@ -53,8 +56,8 @@ class ServiceController extends Controller
                     'id' => $service->user->id,
                     'name' => $service->user->name,
                     'avatar' => $service->user->avatar,
-                    'rating' => $service->user->rating ?? 0,
-                    'reviews' => $service->user->reviews_count ?? 0,
+                    'rating' => round((float) ($service->user->reviews_received_avg_rating ?? 0), 1),
+                    'reviews' => (int) ($service->user->reviews_received_count ?? 0),
                 ],
                 'price' => $service->price,
                 'image' => $service->images[0] ?? $service->image,
@@ -68,7 +71,11 @@ class ServiceController extends Controller
 
     public function show($id)
     {
-        $service = Service::with(['user:id,name,avatar', 'category:id,name,slug', 'packages'])
+        $service = Service::with([
+            'user' => fn ($q) => $q->withCount('reviewsReceived')->withAvg('reviewsReceived', 'rating'),
+            'category:id,name,slug',
+            'packages',
+        ])
             ->where('status', 'active')
             ->find($id);
 
@@ -84,8 +91,8 @@ class ServiceController extends Controller
                 'id' => $service->user->id,
                 'name' => $service->user->name,
                 'avatar' => $service->user->avatar,
-                'rating' => $service->user->rating ?? 0,
-                'reviews' => $service->user->reviews_count ?? 0,
+                'rating' => round((float) ($service->user->reviews_received_avg_rating ?? 0), 1),
+                'reviews' => (int) ($service->user->reviews_received_count ?? 0),
             ],
             'price' => $service->price,
             'image' => $service->images[0] ?? $service->image,
