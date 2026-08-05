@@ -12,7 +12,7 @@ class OrderController extends Controller
     {
         $user = auth()->user();
         $query = Order::where('client_id', $user->id)
-            ->with(['freelancer:id,name,avatar', 'service:id,title', 'conversation:id,order_id'])
+            ->with(['freelancer:id,name,avatar', 'service:id,title,image,images', 'conversation:id,order_id'])
             ->latest();
 
         if ($request->has('status') && $request->status !== 'all') {
@@ -24,6 +24,7 @@ class OrderController extends Controller
                 'id' => $order->id,
                 'orderCode' => $order->order_code,
                 'serviceName' => $order->service->title ?? 'Unknown Service',
+                'serviceImage' => $order->service->images[0] ?? $order->service->image ?? null,
                 'type' => $order->type,
                 'customMin' => $order->custom_min,
                 'customMax' => $order->custom_max,
@@ -49,7 +50,7 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = Order::where('client_id', auth()->id())
-            ->with(['freelancer:id,name,avatar,location,response_time', 'service:id,title,delivery_days', 'conversation:id,order_id'])
+            ->with(['freelancer:id,name,avatar,location,response_time', 'service:id,title,delivery_days,image,images', 'conversation:id,order_id'])
             ->findOrFail($id);
 
         return response()->json([
@@ -81,6 +82,7 @@ class OrderController extends Controller
                     'id' => $order->service->id,
                     'title' => $order->service->title,
                     'deliveryDays' => $order->service->delivery_days,
+                    'image' => $order->service->images[0] ?? $order->service->image ?? null,
                 ],
             ],
         ]);

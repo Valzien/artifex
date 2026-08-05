@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $completedOrders = Order::where('client_id', $user->id)->where('status', 'completed')->count();
 
         $recentOrders = Order::where('client_id', $user->id)
-            ->with(['freelancer:id,name,avatar', 'service:id,title'])
+            ->with(['freelancer:id,name,avatar', 'service:id,title,image,images'])
             ->latest()
             ->take(3)
             ->get()
@@ -26,6 +26,7 @@ class DashboardController extends Controller
                     'id' => $order->id,
                     'orderCode' => $order->order_code,
                     'serviceName' => $order->service->title ?? 'Unknown Service',
+                    'serviceImage' => $order->service->images[0] ?? $order->service->image ?? null,
                     'price' => $order->price,
                     'status' => $order->status,
                     'createdAt' => $order->created_at,
